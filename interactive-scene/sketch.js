@@ -5,7 +5,7 @@ let betMin = 25;
 
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
 }
 
 
@@ -30,7 +30,7 @@ function mouseClicked(){
 
 //function that will determine if you win or now with random odds
 function randomOdds(){
-  let odds = floor(random(1000)); // 501 to be inclusive of 500
+  let odds = floor(random(1000)); // odds from 1-1000, using floor so that I only get integers
   
   if (odds === 999){ // jackpot, pays out 100x
     console.log("JACKPOT");

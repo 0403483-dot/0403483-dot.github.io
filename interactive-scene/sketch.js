@@ -2,6 +2,8 @@ let money = 1000;
 let bet = 25;
 let betMax = 500;
 let betMin = 25;
+let delay = 500;
+let delay2 = 0;
 
 
 function setup() {
@@ -61,7 +63,10 @@ function randomOdds(){
 function placeBet(){ 
   if (bet <= money){ 
     money -= bet;
+    if (millis > delay2){
     randomOdds();
+    }
+  
   }
   else{
     console.log("not enough funds");

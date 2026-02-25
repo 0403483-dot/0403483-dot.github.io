@@ -2,8 +2,9 @@ let money = 1000;
 let bet = 25;
 let betMax = 500;
 let betMin = 25;
-let delay = 500;
-let delay2 = 0;
+let spinning = false;
+let spinStartTime = 0;
+let delay = 5000;
 
 
 function setup() {
@@ -14,13 +15,18 @@ function setup() {
 
 function draw() {
   background(0);
-  text("Money $" + money, width - 100, 50);
+  text("Money $" + money, width - 1000, 50);
   fill(200, 150, 0);
   textSize(15);
-  text("Bet:"+ bet, width -75, 25);
+  text("Bet:"+ bet, width -1000, 25);
   fill(200, 150, 0);
   textSize(15);
   textStyle(BOLD);
+
+  spinDelay();
+
+
+
 }
 
 
@@ -38,22 +44,22 @@ function randomOdds(){
     console.log("JACKPOT");
     money = money + 100*bet;
   }
-  else if (odds >= 999){ // big win odds, pays out 25x
+  else if (odds >= 975){ // big win odds, pays out 25x
     console.log("BIG WIN");
-    money = money + 10*bet;
+    money = money + 25*bet;
 
   }
   else if (odds >= 900){ // normal win pays out 2x, but is rigged
     console.log("WIN");
     money = money + 2*bet;
   }
-  else if (odds >= 600){ // normal win pays out 2x, but is rigged
+  else if (odds >= 600){ // breaking even
     console.log("Broke Even");
     money = money + bet;
 
   }
   else{
-    console.log("bust"); //anything below 55 will be a bust
+    console.log("bust"); //everything else will be a bust
   }
 
 
@@ -61,19 +67,18 @@ function randomOdds(){
 
 //function that places the users bet if they have enough money
 function placeBet(){ 
-  if (bet <= money){ 
+  if(!spinning && bet<=money){
     money -= bet;
-    if (millis > delay2){
-    randomOdds();
-    }
-  
+    spinning = true;
+    startSpinTime = millis();
   }
-  else{
+  
+  
+  else if (money > bet){
     console.log("not enough funds");
-  } 
+  }
+
 }
-
-
 
 
 // function that changes the bet if the mouse wheel is scrolled up/down
@@ -88,5 +93,10 @@ function mouseWheel(event){
   return false; // so that the screen doesn't scroll when the mouse wheel scrolls.
 }
 
-
+function spinDelay(){
+  if (spinning && millis() - spinStartTime >= delay){
+    randomOdds();
+    spinning = false;
+  }
+}
 

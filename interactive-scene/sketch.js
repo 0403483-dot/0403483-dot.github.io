@@ -4,7 +4,7 @@ let betMax = 500;
 let betMin = 25;
 let spinning = false;
 let spinStartTime = 0;
-let delay = 5000;
+let delay = 4000;
 
 
 function setup() {
@@ -70,7 +70,7 @@ function placeBet(){
   if(!spinning && bet<=money){
     money -= bet;
     spinning = true;
-    startSpinTime = millis();
+    spinStartTime = millis();
   }
   
   

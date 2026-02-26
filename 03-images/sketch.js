@@ -13,5 +13,5 @@ function setup() {
 function draw() {
   background(220);
 
-  image(pooyanImg, mouseX, mouseY, pooyanImg.width*6, pooyanImg.heightx11*1.5);
+  image(pooyanImg, mouseX - pooyanImg.width/2, mouseY - pooyanImg.height/2, pooyanImg.width*6, pooyanImg.heightx11*1.5);
 }

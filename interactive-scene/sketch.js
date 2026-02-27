@@ -4,35 +4,33 @@ let betMax = 500;
 let betMin = 25;
 let spinning = false;
 let spinStartTime = 0;
-let delay = 4000;
+let delay = 3000;
+let handleX = windowWidth*0.8;
+let handleY = windowHeight/2;
+let diameter = windowWidth*0.05;
+let dragging = false;
+let originalHandleY = windowHeight /2;
 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  rectMode(CENTER);
 }
 
 
 
 function draw() {
-  background(0);
+  // background(0);
   text("Money $" + money, width - 1000, 50);
-  fill(200, 150, 0);
+  fill(255, 150, 0);
   textSize(15);
   text("Bet:"+ bet, width -1000, 25);
   fill(200, 150, 0);
   textSize(15);
   textStyle(BOLD);
-
   spinDelay();
+  drawSlotMachine();  
 
-
-
-}
-
-
-//when the mouse is clicked, place the users bet
-function mouseClicked(){ 
-  placeBet();
 }
 
 
@@ -49,7 +47,7 @@ function randomOdds(){
     money = money + 25*bet;
 
   }
-  else if (odds >= 900){ // normal win pays out 2x, but is rigged
+  else if (odds >= 900){ // normal win pays out 2x, but is highly rigged
     console.log("WIN");
     money = money + 2*bet;
   }
@@ -83,20 +81,66 @@ function placeBet(){
 
 // function that changes the bet if the mouse wheel is scrolled up/down
 function mouseWheel(event){  
-  if (event.delta < 0 && bet < betMax){ // can't bet over $500
-    bet+=5;
-  }
-  else if(event.delta > 0 && bet > betMin){ // can't bet under $25
-    bet -=5;
+  if (spinning === false){ //makes sure you can't change bet while the slots machine is spinning
+    if (event.delta < 0 && bet < betMax){ // can't bet over $500
+      bet+=5;
+    }
+    else if(event.delta > 0 && bet > betMin){ // can't bet under $25
+      bet -=5;
+    }
+
+    return false; // so that the screen doesn't scroll when the mouse wheel scrolls.
   }
 
-  return false; // so that the screen doesn't scroll when the mouse wheel scrolls.
 }
-
-function spinDelay(){
+  
+function spinDelay(){ //adds the delay before getting your result for tension
   if (spinning && millis() - spinStartTime >= delay){
     randomOdds();
     spinning = false;
   }
 }
 
+function drawSlotMachine(){ //draws the rectangles that build the slots machine.
+  fill(50);
+  rect(windowWidth/2, windowHeight/2, windowWidth*0.5, windowHeight*0.6, 10);
+
+  fill (255);
+  rect(windowWidth/3, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
+
+  rect(windowWidth/2, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
+
+  rect(windowWidth/1.5, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
+
+  fill(255,0,0);
+  circle(handleX, handleY, diameter);
+
+}
+
+function mousePressed(){
+  let handleDist = dist(mouseX, mouseY, handleX, handleY);
+  if (handleDist <= diameter/2){
+    dragging = true;
+
+  }
+}
+
+function mouseDragged(){ //keeps the mouse with the handle
+  if (dragging){
+    handleY = constrain(mouseY, originalHandleY, originalHandleY + 150);
+  }
+}
+
+function mouseReleased(){
+  if (dragging){
+    dragging = false;
+
+    // If pulled far enough, spin
+    if (handleY > originalHandleY + 100){
+      placeBet();
+    }
+
+    // Resets the lever
+    handleY = originalHandleY;
+  }
+} 

@@ -5,14 +5,19 @@ let betMin = 25;
 let spinning = false;
 let spinStartTime = 0;
 let delay = 3000;
-let handleX = windowWidth*0.8;
-let handleY = windowHeight/2;
-let diameter = windowWidth*0.05;
+let handleX;
+let handleY;
+let diameter;
 let dragging = false;
-let originalHandleY = windowHeight /2;
+let originalHandleY;
+let result;
 
 
 function setup() {
+  handleX = windowWidth*0.8;
+  handleY = windowHeight/2;
+  diameter = windowWidth*0.05;
+  originalHandleY = windowHeight /2;
   createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
 }
@@ -20,7 +25,7 @@ function setup() {
 
 
 function draw() {
-  // background(0);
+  background(0);
   text("Money $" + money, width - 1000, 50);
   fill(255, 150, 0);
   textSize(15);
@@ -41,23 +46,28 @@ function randomOdds(){
   if (odds === 999){ // jackpot, pays out 100x
     console.log("JACKPOT");
     money = money + 100*bet;
+    reuslt = "JACKPOT"
   }
   else if (odds >= 975){ // big win odds, pays out 25x
     console.log("BIG WIN");
     money = money + 25*bet;
+    result = "BIG WIN!"
 
   }
   else if (odds >= 900){ // normal win pays out 2x, but is highly rigged
     console.log("WIN");
     money = money + 2*bet;
+    result = "win"
   }
   else if (odds >= 600){ // breaking even
     console.log("Broke Even");
     money = money + bet;
+    reuslt = "Broke Even"
 
   }
   else{
     console.log("bust"); //everything else will be a bust
+    result = "bust"
   }
 
 
@@ -69,11 +79,13 @@ function placeBet(){
     money -= bet;
     spinning = true;
     spinStartTime = millis();
+    result = ""
   }
   
   
-  else if (money > bet){
+  else if (money < bet){
     console.log("not enough funds");
+    result = "Not Enough Funds"
   }
 
 }
@@ -114,6 +126,9 @@ function drawSlotMachine(){ //draws the rectangles that build the slots machine.
 
   fill(255,0,0);
   circle(handleX, handleY, diameter);
+  
+  fill(255)
+  text(result, windowWidth/2, windowHeight - 100)
 
 }
 

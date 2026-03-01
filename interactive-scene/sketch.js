@@ -10,8 +10,10 @@ let handleY;
 let diameter;
 let dragging = false;
 let originalHandleY;
-let result;
-let gameState = "start";
+let result = " "
+let gameState = "start screen";
+let pullHere = "Pull To Spin!";
+let spinSpeed = 20;
 
 
 
@@ -33,10 +35,10 @@ function windowResized(){
 
 
 }
-
+ 
 
 function draw() {
-  if (gameState === "start"){
+  if (gameState === "start screen"){
     drawStartScreen();
   }
   else if (gameState === "playing"){
@@ -62,7 +64,7 @@ function drawStartScreen(){
 }
 
 function keyPressed(){ 
-  if (gameState === "start" && key === ' '){
+  if (gameState === "start screen" && key === ' '){
     gameState = "playing"
   }
 }
@@ -70,16 +72,17 @@ function keyPressed(){
 function drawText(){
   fill(0, 150, 0);
   textSize(25);
-  text("Money $" + money, windowWidth*0.9, windowHeight* 0.05);
-  
-  textSize(25);
-  fill(200, 150, 0);
-  text("Bet:"+ bet, windowWidth*0.9, windowHeight*0.08);
   textStyle(BOLD);
+  text("Money $" + money, windowWidth*0.9, windowHeight* 0.05);
 
+  fill(200, 150, 0);
+  text("Bet:"+ bet, windowWidth*0.9, windowHeight*0.09); 
   
   fill(255);
-  text(result, windowWidth/2, windowHeight - 100);
+  text(result, windowWidth/2, windowHeight - 100); // text for the result of the spin
+
+  fill(255);
+  text(pullHere, handleX, handleY*0.85  )
 
 }
 
@@ -92,10 +95,8 @@ function randomOdds(){
     result = "JACKPOT!!";
   }
   else if (odds >= 975){ // big win odds, pays out 25x
-
     money = money + 25*bet;
     result = "BIG WIN!";
-
   }
   else if (odds >= 900){ // normal win pays out 2x, but is highly rigged
     money = money + 2*bet;
@@ -104,15 +105,12 @@ function randomOdds(){
   else if (odds >= 600){ // breaking even
     money = money + bet;
     result = "BROKE EVEN";
-
   }
   else{
-    console.log("bust"); //everything else will be a bust
     result = "BUST";
   }
-
-
 }
+
 
 //function that places the users bet if they have enough money
 function placeBet(){ 
@@ -125,11 +123,11 @@ function placeBet(){
   
   
   else if (money < bet){
-    console.log("not enough funds");
     result = "Not Enough Funds";
   }
-
 }
+
+
 
 
 // function that changes the bet if the mouse wheel is scrolled up/down
@@ -144,15 +142,17 @@ function mouseWheel(event){
 
     return false; // so that the screen doesn't scroll when the mouse wheel scrolls.
   }
-
 }
-  
+
+
 function spinDelay(){ //adds the delay before getting your result
   if (spinning && millis() - spinStartTime >= delay){
     randomOdds();
     spinning = false;
+    pullHere = "Pull To Spin!"
   }
 }
+
 
 function drawSlotMachine(){ //draws the rectangles that build the slots machine.
   
@@ -165,6 +165,12 @@ function drawSlotMachine(){ //draws the rectangles that build the slots machine.
   rect(windowWidth/2, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
 
   rect(windowWidth/1.5, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
+
+  fill(50)
+  let rodLength = 180  -(handleY - originalHandleY);
+  rodLength = max(rodLength, 0)
+  rect(handleX, handleY + rodLength/2, windowWidth*0.02, rodLength);
+
 
   fill(255,0,0);
   circle(handleX, handleY, diameter);
@@ -182,6 +188,7 @@ function mousePressed(){
 function mouseDragged(){ //keeps the mouse with the handle
   if (dragging){
     handleY = constrain(mouseY, originalHandleY, originalHandleY + 150);
+    pullHere = " "
   }
 }
 
@@ -196,5 +203,6 @@ function mouseReleased(){
 
     // Resets the lever
     handleY = originalHandleY;
+  
   }
 } 

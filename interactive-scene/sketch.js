@@ -13,8 +13,10 @@ let originalHandleY;
 let result = " "
 let gameState = "start screen";
 let pullHere = "Pull To Spin!";
-let spinSpeed = 20;
-
+let shapeOne = "square";
+let shapeTwo = "square";
+let shapeThree = "square";
+let symbols = ["square", "circle", "triangle"];
 
 
 function setup() {
@@ -26,16 +28,16 @@ function setup() {
   rectMode(CENTER);
 }
 
+
 function windowResized(){ 
   resizeCanvas(windowWidth, windowHeight); 
 
   handleX = windowWidth*0.8; // moves the handle when the window is resized
   originalHandleY= windowHeight / 2;
   diameter = windowWidth * 0.05;
-
-
 }
  
+
 
 function draw() {
   if (gameState === "start screen"){
@@ -45,11 +47,15 @@ function draw() {
     background(0)
     drawText();
     spinDelay(); 
-    drawSlotMachine();  
+    drawSlotMachine(); 
+    if (spinning) {
+      shapeOne = random(symbols);
+      shapeTwo = random(symbols);
+      shapeThree = random(symbols);
+    }
   }
-  
-
 }
+
 
 function drawStartScreen(){
   background(0,0,100);
@@ -91,9 +97,9 @@ function randomOdds(){
   let odds = floor(random(1000)); // odds from 1-1000, using floor so that I only get integers
   
   if (odds === 999){ // jackpot, pays out 100x
-    money = money + 100*bet;
-    result = "JACKPOT!!";
-  }
+    money = money + 100*bet; 
+    result = "JACKPOT!";
+  }  
   else if (odds >= 975){ // big win odds, pays out 25x
     money = money + 25*bet;
     result = "BIG WIN!";
@@ -150,45 +156,55 @@ function spinDelay(){ //adds the delay before getting your result
     randomOdds();
     spinning = false;
     pullHere = "Pull To Spin!"
+    setFinalShapes(); // once the result is given after the delay, set the graphics for the final shapes
   }
 }
 
 
-function drawSlotMachine(){ //draws the rectangles that build the slots machine.
+function drawSlotMachine(){ 
   
+  //draws the rectangles that build the slots machine.
   fill(50);
   rect(windowWidth/2, windowHeight/2, windowWidth*0.5, windowHeight*0.6, 10);
 
   fill (255);
   rect(windowWidth/3, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
 
-  rect(windowWidth/2, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
+  rect(windowWidth/2, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10); 
 
   rect(windowWidth/1.5, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
 
+
+  //draws the track that the handle is being pulled down
   fill(50)
   let rodLength = 180  -(handleY - originalHandleY);
   rodLength = max(rodLength, 0)
   rect(handleX, handleY + rodLength/2, windowWidth*0.02, rodLength);
 
-
+  //draws the red handle to drag
   fill(255,0,0);
   circle(handleX, handleY, diameter);
+
+  //draws the symbols inside the machine 
+  drawSymbol(shapeOne, windowWidth/3, windowHeight/2);
+  drawSymbol(shapeTwo, windowWidth/2, windowHeight/2);
+  drawSymbol(shapeThree, windowWidth/1.5, windowHeight/2)
   
 }
 
 function mousePressed(){
-  let handleDist = dist(mouseX, mouseY, handleX, handleY);
-  if (handleDist <= diameter/2){
+  let handleDist = dist(mouseX, mouseY, handleX, handleY); 
+  if (handleDist <= diameter/2){// if the mouse is within the red circle
     dragging = true;
 
   }
 }
 
-function mouseDragged(){ //keeps the mouse with the handle
+function mouseDragged(){ //keeps the mouse with the handle while the handle is being dragged
   if (dragging){
     handleY = constrain(mouseY, originalHandleY, originalHandleY + 150);
-    pullHere = " "
+    
+    pullHere = " " //removes the pull here text while pulling
   }
 }
 
@@ -196,7 +212,7 @@ function mouseReleased(){
   if (dragging){
     dragging = false;
 
-    // If pulled far enough, spin
+    // If pulled far enough, place the users bet
     if (handleY > originalHandleY + 100){
       placeBet();
     }
@@ -206,3 +222,46 @@ function mouseReleased(){
   
   }
 } 
+
+function setFinalShapes(){
+  if (result === "JACKPOT!"){ //when you get a jackpot 3 yellow triangles will appear in the slots
+    shapeOne = shapeTwo = shapeThree = "triangle";
+  }
+  else if (result === "BIG WIN!"){ //big win has 3 green circles
+    shapeOne = shapeTwo = shapeThree = "circle";
+  }
+  else if (result === "WIN"){ // a win is 3 red squares
+    shapeOne = shapeTwo = shapeThree = "square";
+  }
+  else if (result === "BROKE EVEN"){
+    shapeOne = shapeTwo = "square"; //two red squares in first two slots is breaking even
+    shapeThree = random(["circle", "triangle"])
+  }
+  
+
+  // on a bust sets the slots to random but doesnt allow for a result that overlaps with a win
+  else{
+    shapeOne = random(["triangle", "circle"]); 
+    shapeTwo = random(["triangle", "square"]);
+    shapeThree = random(["circle", "square"]);
+
+
+  }
+}
+
+function drawSymbol(symbol, x, y){
+
+  if (symbol === "square"){
+    fill(255, 0, 0);
+    rect(x, y, 60, 60); 
+  }
+  else if(symbol === "circle"){
+    fill(0,255,0);
+    circle(x,y,60)
+  }
+
+  else if (symbol === "triangle"){
+    fill(255,255,0)
+    triangle(x-30, y+30, x, y-30, x+30, y+30)
+  }
+}

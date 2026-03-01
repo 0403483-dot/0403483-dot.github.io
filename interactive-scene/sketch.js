@@ -11,6 +11,8 @@ let diameter;
 let dragging = false;
 let originalHandleY;
 let result;
+let gameState = "start";
+
 
 
 function setup() {
@@ -22,52 +24,91 @@ function setup() {
   rectMode(CENTER);
 }
 
+function windowResized(){ 
+  resizeCanvas(windowWidth, windowHeight); 
 
+  handleX = windowWidth*0.8; // moves the handle when the window is resized
+  originalHandleY= windowHeight / 2;
+  diameter = windowWidth * 0.05;
 
-function draw() {
-  background(0);
-  text("Money $" + money, width - 1000, 50);
-  fill(255, 150, 0);
-  textSize(15);
-  text("Bet:"+ bet, width -1000, 25);
-  fill(200, 150, 0);
-  textSize(15);
-  textStyle(BOLD);
-  spinDelay();
-  drawSlotMachine();  
 
 }
 
+
+function draw() {
+  if (gameState === "start"){
+    drawStartScreen();
+  }
+  else if (gameState === "playing"){
+    background(0)
+    drawText();
+    spinDelay(); 
+    drawSlotMachine();  
+  }
+  
+
+}
+
+function drawStartScreen(){
+  background(0,0,100);
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(60); 
+  textStyle(BOLD)
+  text("SLOTS MACHINE", windowWidth/2, windowHeight/2);
+
+  textSize(40)
+  text("Press SPACE to start!", windowWidth/2, windowHeight/2 + 100)
+}
+
+function keyPressed(){ 
+  if (gameState === "start" && key === ' '){
+    gameState = "playing"
+  }
+}
+
+function drawText(){
+  fill(0, 150, 0);
+  textSize(25);
+  text("Money $" + money, windowWidth*0.9, windowHeight* 0.05);
+  
+  textSize(25);
+  fill(200, 150, 0);
+  text("Bet:"+ bet, windowWidth*0.9, windowHeight*0.08);
+  textStyle(BOLD);
+
+  
+  fill(255);
+  text(result, windowWidth/2, windowHeight - 100);
+
+}
 
 //function that will determine if you win or now with random odds
 function randomOdds(){
   let odds = floor(random(1000)); // odds from 1-1000, using floor so that I only get integers
   
   if (odds === 999){ // jackpot, pays out 100x
-    console.log("JACKPOT");
     money = money + 100*bet;
-    reuslt = "JACKPOT"
+    result = "JACKPOT!!";
   }
   else if (odds >= 975){ // big win odds, pays out 25x
-    console.log("BIG WIN");
+
     money = money + 25*bet;
-    result = "BIG WIN!"
+    result = "BIG WIN!";
 
   }
   else if (odds >= 900){ // normal win pays out 2x, but is highly rigged
-    console.log("WIN");
     money = money + 2*bet;
-    result = "win"
+    result = "WIN";
   }
   else if (odds >= 600){ // breaking even
-    console.log("Broke Even");
     money = money + bet;
-    reuslt = "Broke Even"
+    result = "BROKE EVEN";
 
   }
   else{
     console.log("bust"); //everything else will be a bust
-    result = "bust"
+    result = "BUST";
   }
 
 
@@ -79,13 +120,13 @@ function placeBet(){
     money -= bet;
     spinning = true;
     spinStartTime = millis();
-    result = ""
+    result = "";
   }
   
   
   else if (money < bet){
     console.log("not enough funds");
-    result = "Not Enough Funds"
+    result = "Not Enough Funds";
   }
 
 }
@@ -106,7 +147,7 @@ function mouseWheel(event){
 
 }
   
-function spinDelay(){ //adds the delay before getting your result for tension
+function spinDelay(){ //adds the delay before getting your result
   if (spinning && millis() - spinStartTime >= delay){
     randomOdds();
     spinning = false;
@@ -114,6 +155,7 @@ function spinDelay(){ //adds the delay before getting your result for tension
 }
 
 function drawSlotMachine(){ //draws the rectangles that build the slots machine.
+  
   fill(50);
   rect(windowWidth/2, windowHeight/2, windowWidth*0.5, windowHeight*0.6, 10);
 
@@ -127,9 +169,6 @@ function drawSlotMachine(){ //draws the rectangles that build the slots machine.
   fill(255,0,0);
   circle(handleX, handleY, diameter);
   
-  fill(255)
-  text(result, windowWidth/2, windowHeight - 100)
-
 }
 
 function mousePressed(){

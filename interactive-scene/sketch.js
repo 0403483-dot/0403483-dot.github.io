@@ -1,22 +1,36 @@
+
+//starts the game on the start screen
+let gameState = "start screen";
+
+//money and bet variables
 let money = 1000;
 let bet = 25;
 let betMax = 500;
 let betMin = 25;
+
+//spinning variables, sets up the delay and checks if the machine is spinning
 let spinning = false;
 let spinStartTime = 0;
 let delay = 3000;
+
+//the handle and lever variables
 let handleX;
 let handleY;
 let diameter;
 let dragging = false;
 let originalHandleY;
-let result = " "
-let gameState = "start screen";
+let result = " ";
+
+//text for pulling the lever
 let pullHere = "Pull To Spin!";
+
+//variables for drawing the shapes
+let symbols = ["square", "circle", "triangle"];
 let shapeOne = "square";
 let shapeTwo = "square";
 let shapeThree = "square";
-let symbols = ["square", "circle", "triangle"];
+
+
 
 
 function setup() {
@@ -44,7 +58,7 @@ function draw() {
     drawStartScreen();
   }
   else if (gameState === "playing"){
-    background(0)
+    background(0);
     drawText();
     spinDelay(); 
     drawSlotMachine(); 
@@ -60,22 +74,23 @@ function draw() {
 function drawStartScreen(){
   background(0,0,100);
   fill(255);
-  textAlign(CENTER, CENTER);
+  textAlign(CENTER, CENTER); // puts title text in the center
   textSize(60); 
-  textStyle(BOLD)
+  textStyle(BOLD);
   text("SLOTS MACHINE", windowWidth/2, windowHeight/2);
 
-  textSize(40)
-  text("Press SPACE to start!", windowWidth/2, windowHeight/2 + 100)
+  textSize(40);
+  text("Press SPACE to start!", windowWidth/2, windowHeight/2 + 100); 
 }
 
+//function for when the spacec key is pressed, change the game state to playing
 function keyPressed(){ 
-  if (gameState === "start screen" && key === ' '){
-    gameState = "playing"
+  if (gameState === "start screen" && key === ' '){ 
+    gameState = "playing";
   }
 }
 
-function drawText(){
+function drawText(){ //draws the money and bet text 
   fill(0, 150, 0);
   textSize(25);
   textStyle(BOLD);
@@ -88,7 +103,7 @@ function drawText(){
   text(result, windowWidth/2, windowHeight - 100); // text for the result of the spin
 
   fill(255);
-  text(pullHere, handleX, handleY*0.85  )
+  text(pullHere, handleX, handleY*0.85  );
 
 }
 
@@ -120,7 +135,7 @@ function randomOdds(){
 
 //function that places the users bet if they have enough money
 function placeBet(){ 
-  if(!spinning && bet<=money){
+  if(!spinning && bet<=money){ //can't be spinning the machine already and need more money that you are trying to bet
     money -= bet;
     spinning = true;
     spinStartTime = millis();
@@ -155,7 +170,7 @@ function spinDelay(){ //adds the delay before getting your result
   if (spinning && millis() - spinStartTime >= delay){
     randomOdds();
     spinning = false;
-    pullHere = "Pull To Spin!"
+    pullHere = "Pull To Spin!";
     setFinalShapes(); // once the result is given after the delay, set the graphics for the final shapes
   }
 }
@@ -176,9 +191,9 @@ function drawSlotMachine(){
 
 
   //draws the track that the handle is being pulled down
-  fill(50)
+  fill(50);
   let rodLength = 180  -(handleY - originalHandleY);
-  rodLength = max(rodLength, 0)
+  rodLength = max(rodLength, 0);
   rect(handleX, handleY + rodLength/2, windowWidth*0.02, rodLength);
 
   //draws the red handle to drag
@@ -188,7 +203,7 @@ function drawSlotMachine(){
   //draws the symbols inside the machine 
   drawSymbol(shapeOne, windowWidth/3, windowHeight/2);
   drawSymbol(shapeTwo, windowWidth/2, windowHeight/2);
-  drawSymbol(shapeThree, windowWidth/1.5, windowHeight/2)
+  drawSymbol(shapeThree, windowWidth/1.5, windowHeight/2);
   
 }
 
@@ -204,7 +219,7 @@ function mouseDragged(){ //keeps the mouse with the handle while the handle is b
   if (dragging){
     handleY = constrain(mouseY, originalHandleY, originalHandleY + 150);
     
-    pullHere = " " //removes the pull here text while pulling
+    pullHere = " "; //removes the pull here text while pulling
   }
 }
 
@@ -223,6 +238,8 @@ function mouseReleased(){
   }
 } 
 
+
+//function that sets the final shapes based on the given result from the random odds function
 function setFinalShapes(){
   if (result === "JACKPOT!"){ //when you get a jackpot 3 yellow triangles will appear in the slots
     shapeOne = shapeTwo = shapeThree = "triangle";
@@ -235,11 +252,11 @@ function setFinalShapes(){
   }
   else if (result === "BROKE EVEN"){
     shapeOne = shapeTwo = "square"; //two red squares in first two slots is breaking even
-    shapeThree = random(["circle", "triangle"])
+    shapeThree = random(["circle", "triangle"]);
   }
   
 
-  // on a bust sets the slots to random but doesnt allow for a result that overlaps with a win
+  // on a bust sets the slots to random but doesnt allow for a result that overlaps with a win result
   else{
     shapeOne = random(["triangle", "circle"]); 
     shapeTwo = random(["triangle", "square"]);
@@ -249,19 +266,21 @@ function setFinalShapes(){
   }
 }
 
+//draws the symbols with a given string symbol, and x, y coordinates
 function drawSymbol(symbol, x, y){
 
   if (symbol === "square"){
     fill(255, 0, 0);
-    rect(x, y, 60, 60); 
+    rect(x, y, windowWidth/32, windowHeight/18); 
   }
   else if(symbol === "circle"){
     fill(0,255,0);
-    circle(x,y,60)
+    circle(x,y, windowWidth/32);
   }
 
   else if (symbol === "triangle"){
-    fill(255,255,0)
-    triangle(x-30, y+30, x, y-30, x+30, y+30)
+    let size = windowWidth/32;
+    fill(255,255,0);
+    triangle(x-size/2, y+size/2, x, y-size/2, x+size/2, y+size/2);
   }
 }

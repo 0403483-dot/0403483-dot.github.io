@@ -67,6 +67,7 @@ function windowResized(){
   }
 }
 
+
 function draw() {
   if (gameState === "start screen"){
     drawStartScreen();
@@ -89,7 +90,7 @@ function draw() {
       shapeThree = random(symbols);
 
     }
-}
+  }
 }
 
 //draws the start screen with the game title
@@ -117,11 +118,11 @@ function keyPressed(){
     money = 1000;
     bet = betMin;
   }
-  }
+}
 
 
 
-  //updates and displays all money, bet, and result text
+//updates and displays all money, bet, and result text
 //also shows legend for possible outcomes and instructions
 function drawText(){
   fill(0, 150, 0);
@@ -203,13 +204,14 @@ function placeBet(){
   if(!spinning && bet<=money ){ 
     if (allIn) { // uses allIn toggle to bet all money if activated
       activeBet = money;
-}   else {
+    }   
+    else {
       activeBet = bet;
-}
-      money -= activeBet;
-      spinning = true;
-      spinStartTime = millis();
-      result = "";
+    }
+    money -= activeBet;
+    spinning = true;
+    spinStartTime = millis();
+    result = "";
   }
   
   else if (money < bet){

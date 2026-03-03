@@ -1,5 +1,18 @@
+//Project: Interactive Scene
+//Jonathan Hlady
+// March 2nd 2026
+//Goal: To create a functioning slots machine with a draggable lever and random odds for wining
+//where users can place bets based on the amount of money that they have.
 
-//starts the game on the start screen
+//Extra for experts: For my extra for experts I managed to use scroll wheel as an input for changing 
+//how much the user is betting. By using mouse wheel events, with a negative event.delta 
+//meaning that the user is scrolling up and a positive event.delta meaning the user is scrolling down
+//I was able to make the scroll wheel change the amount of the bet. I also worked on having the visuals
+//still work when the window is resized with the windowResized function, though it is not flawless.
+
+
+
+//game state variable that lets the program know if the user is playing
 let gameState = "start screen";
 
 //money and bet variables
@@ -33,10 +46,8 @@ let shapeTwo = "square";
 let shapeThree = "square";
 
 
-
-
 function setup() {
-  handleX = windowWidth*0.8;
+  handleX = windowWidth*0.8; // initalizes the handle variables once the windowHeight and Width have been declared
   handleY = windowHeight/2;
   diameter = windowWidth*0.05;
   originalHandleY = windowHeight /2;
@@ -51,9 +62,10 @@ function windowResized(){
   handleX = windowWidth*0.8; // moves the handle when the window is resized
   originalHandleY= windowHeight / 2;
   diameter = windowWidth * 0.05;
+  if(!dragging){
+    handleY = originalHandleY;
+  }
 }
- 
-
 
 function draw() {
   if (gameState === "start screen"){
@@ -62,10 +74,10 @@ function draw() {
   else if (gameState === "playing"){
     
     if(allIn){
-      background(255,255,0)
+      background(255,255,0);
     }
     else {
-      background(0)
+      background(0);
     }
     drawText();
     spinDelay();
@@ -98,33 +110,62 @@ function keyPressed(){
   if (gameState === "start screen" && key === ' '){ 
     gameState = "playing"; 
   }
-  if (keyCode === SHIFT && gameState === "playing"){
-    allIn = true;
+  if (keyCode === SHIFT && gameState === "playing" && !spinning){
+    allIn = !allIn;
   }
-  if (gameState === "playing" && key === "r" ){
-    money = 1000
+  if (gameState === "playing" && key === "r" && !spinning){
+    money = 1000;
     bet = betMin;
   }
   }
-  
-function drawText(){ //draws the money and bet text 
+
+
+//updates and displays all money, bet, and result text
+//also shows legend for possible outcomes and instructions
+function drawText(){
   fill(0, 150, 0);
-  textSize(25);
+  textSize(windowWidth*0.015);
   textStyle(BOLD);
-  text("Money $" + money, windowWidth*0.9, windowHeight* 0.05);
+  text("Money $" + money, windowWidth*0.8, windowHeight* 0.05);
+
+  let displayBet;
+  if(allIn){
+    displayBet = money;
+  }
+  else{
+    displayBet = bet;
+  }
 
   fill(200, 150, 0);
-  text("Bet:"+ bet, windowWidth*0.9, windowHeight*0.09); 
+  text("Bet: $"+ displayBet, windowWidth*0.8, windowHeight*0.09); 
   
-  fill(255);
-  text(result, windowWidth/2, windowHeight - 100); // text for the result of the spin
+  if(allIn){
+    fill(0);
+  }
+  else{
+    fill(255);
+  }
+  textAlign(LEFT, TOP);
+  textSize(windowWidth*0.01);
+  
+  let xOffset = windowWidth *0.01;
+  //draws the legend for the users
+  text("JACKPOT 100x BET: ⚠️⚠️⚠️", xOffset, windowHeight/2 - windowHeight *0.15 );
+  text("BIG WIN 25x BET: 🟢🟢🟢" ,xOffset, windowHeight/2 - windowHeight * 0.1);
+  text("WIN 2x BET: 🟥🟥🟥", xOffset, windowHeight/2 - windowHeight * 0.05);
+  text("BREAK EVEN: 🟥🟥", xOffset, windowHeight/2);
+  text("PRESS SHIFT TO GO ALL IN", xOffset, windowHeight/2 + windowHeight * 0.05);
+  text("PRESS R TO RESET MONEY", xOffset, windowHeight/2 + windowHeight *0.1);
 
-  fill(255);
-  text(pullHere, handleX, handleY*0.85  );
+  text(result, windowWidth/2, windowHeight * 0.95); // text for the result of the spin
+ 
+  text(pullHere, handleX*0.95, handleY*0.85  );
+ 
+} 
 
-}
 
-//function that will determine if you win or now with random odds
+//function that will determine the result
+//updates money based on active bet
 function randomOdds(){
   let odds = floor(random(1000)); // odds from 1-1000, using floor so that I only get integers
   
@@ -150,15 +191,16 @@ function randomOdds(){
 }
 
 
-//function that places the users bet if they have enough money
+//function that places the users bet if they have enough money and starts the spin
+//
 function placeBet(){ 
   if (money === 0){
-    result = "No Money Left!"
+    result = "No Money Left!";
     return; 
   }
   
-  if(!spinning && bet<=money){ //can't be spinning the machine already and need more money that you are trying to bet
-    if (allIn) {
+  if(!spinning && bet<=money ){ 
+    if (allIn) { // uses allIn toggle to bet all money if activated
       activeBet = money;
 }   else {
       activeBet = bet;
@@ -169,7 +211,6 @@ function placeBet(){
       result = "";
   }
   
-  
   else if (money < bet){
     result = "Not Enough Funds";
   }
@@ -178,9 +219,9 @@ function placeBet(){
 
 
 
-// function that changes the bet if the mouse wheel is scrolled up/down
+// function that changes the bet if the mouse wheel is scrolled up/down, when not spinning and not all in
 function mouseWheel(event){  
-  if (spinning === false){ //makes sure you can't change bet while the slots machine is spinning
+  if (spinning === false && !allIn){ 
     if (event.delta < 0 && bet < betMax){ // can't bet over $500
       bet+=5;
     }
@@ -192,8 +233,8 @@ function mouseWheel(event){
   }
 }
 
-
-function spinDelay(){ //adds the delay before getting your result
+//adds a delay for the spinning animation, then finalizes results
+function spinDelay(){
   if (spinning && millis() - spinStartTime >= delay){
     randomOdds();
     spinning = false;
@@ -202,10 +243,9 @@ function spinDelay(){ //adds the delay before getting your result
   }
 }
 
-
+//draws slots machine visuals including lever, symbols and the machine itself
 function drawSlotMachine(){ 
   
-  //draws the rectangles that build the slots machine.
   fill(50);
   rect(windowWidth/2, windowHeight/2, windowWidth*0.5, windowHeight*0.6, 10);
 
@@ -216,14 +256,11 @@ function drawSlotMachine(){
 
   rect(windowWidth/1.5, windowHeight/2, windowWidth*0.1, windowHeight* 0.4, 10);
 
-
-  //draws the track that the handle is being pulled down
   fill(50);
-  let rodLength = 180  -(handleY - originalHandleY);
+  let rodLength = windowHeight*0.2 - (handleY - originalHandleY); // have the rod length change when user is pulling down
   rodLength = max(rodLength, 0);
   rect(handleX, handleY + rodLength/2, windowWidth*0.02, rodLength);
 
-  //draws the red handle to drag
   fill(255,0,0);
   circle(handleX, handleY, diameter);
 
@@ -234,6 +271,7 @@ function drawSlotMachine(){
   
 }
 
+//starts dragging id the lever is clicked
 function mousePressed(){
   let handleDist = dist(mouseX, mouseY, handleX, handleY); 
   if (handleDist <= diameter/2){// if the mouse is within the red circle
@@ -242,7 +280,8 @@ function mousePressed(){
   }
 }
 
-function mouseDragged(){ //keeps the mouse with the handle while the handle is being dragged
+
+function mouseDragged(){ //moves the lever with the mouse, constraining it to its track
   if (dragging){
     handleY = constrain(mouseY, originalHandleY, originalHandleY + 150);
     
@@ -250,35 +289,34 @@ function mouseDragged(){ //keeps the mouse with the handle while the handle is b
   }
 }
 
+//releases the lever, triggers bet if pulled far enough, then resets the lever
 function mouseReleased(){
   if (dragging){
     dragging = false;
 
-    // If pulled far enough, place the users bet
+    
     if (handleY > originalHandleY + 100){
       placeBet();
     }
 
-    // Resets the lever
     handleY = originalHandleY;
   
   }
 } 
 
-
 //function that sets the final shapes based on the given result from the random odds function
 function setFinalShapes(){
-  if (result === "JACKPOT!"){ //when you get a jackpot 3 yellow triangles will appear in the slots
+  if (result === "JACKPOT!"){
     shapeOne = shapeTwo = shapeThree = "triangle";
   }
-  else if (result === "BIG WIN!"){ //big win has 3 green circles
+  else if (result === "BIG WIN!"){
     shapeOne = shapeTwo = shapeThree = "circle";
   }
-  else if (result === "WIN"){ // a win is 3 red squares
+  else if (result === "WIN"){ 
     shapeOne = shapeTwo = shapeThree = "square";
   }
   else if (result === "BROKE EVEN"){
-    shapeOne = shapeTwo = "square"; //two red squares in first two slots is breaking even
+    shapeOne = shapeTwo = "square"; 
     shapeThree = random(["circle", "triangle"]);
   }
   
@@ -288,10 +326,10 @@ function setFinalShapes(){
     shapeOne = random(["triangle", "circle"]); 
     shapeTwo = random(["triangle", "square"]);
     shapeThree = random(["circle", "square"]);
-
-
   }
 }
+
+
 
 //draws the symbols with a given string symbol, and x, y coordinates
 function drawSymbol(symbol, x, y){
@@ -311,11 +349,3 @@ function drawSymbol(symbol, x, y){
     triangle(x-size/2, y+size/2, x, y-size/2, x+size/2, y+size/2);
   }
 }
-
-function keyReleased(){
-  if (keyCode === SHIFT && !spinning){
-    allIn = false;
-    // bet = betMin;  
-  }
-}  
-

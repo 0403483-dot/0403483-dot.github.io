@@ -7,11 +7,13 @@ let money = 1000;
 let bet = 25;
 let betMax = 500;
 let betMin = 25;
+let activeBet = 0;
 
 //spinning variables, sets up the delay and checks if the machine is spinning
 let spinning = false;
 let spinStartTime = 0;
 let delay = 3000;
+let allIn = false;
 
 //the handle and lever variables
 let handleX;
@@ -56,18 +58,26 @@ function windowResized(){
 function draw() {
   if (gameState === "start screen"){
     drawStartScreen();
-  }
+  } 
   else if (gameState === "playing"){
-    background(0);
+    
+    if(allIn){
+      background(255,255,0)
+    }
+    else {
+      background(0)
+    }
     drawText();
-    spinDelay(); 
-    drawSlotMachine(); 
+    spinDelay();
+    drawSlotMachine();  
+
     if (spinning) {
       shapeOne = random(symbols);
       shapeTwo = random(symbols);
       shapeThree = random(symbols);
+
     }
-  }
+}
 }
 
 
@@ -86,10 +96,17 @@ function drawStartScreen(){
 //function for when the spacec key is pressed, change the game state to playing
 function keyPressed(){ 
   if (gameState === "start screen" && key === ' '){ 
-    gameState = "playing";
+    gameState = "playing"; 
   }
-}
-
+  if (keyCode === SHIFT && gameState === "playing"){
+    allIn = true;
+  }
+  if (gameState === "playing" && key === "r" ){
+    money = 1000
+    bet = betMin;
+  }
+  }
+  
 function drawText(){ //draws the money and bet text 
   fill(0, 150, 0);
   textSize(25);
@@ -112,19 +129,19 @@ function randomOdds(){
   let odds = floor(random(1000)); // odds from 1-1000, using floor so that I only get integers
   
   if (odds === 999){ // jackpot, pays out 100x
-    money = money + 100*bet; 
+    money = money + 100*activeBet; 
     result = "JACKPOT!";
   }  
   else if (odds >= 975){ // big win odds, pays out 25x
-    money = money + 25*bet;
+    money = money + 25*activeBet;
     result = "BIG WIN!";
   }
   else if (odds >= 900){ // normal win pays out 2x, but is highly rigged
-    money = money + 2*bet;
+    money = money + 2*activeBet;
     result = "WIN";
   }
   else if (odds >= 600){ // breaking even
-    money = money + bet;
+    money = money + activeBet;
     result = "BROKE EVEN";
   }
   else{
@@ -135,11 +152,21 @@ function randomOdds(){
 
 //function that places the users bet if they have enough money
 function placeBet(){ 
+  if (money === 0){
+    result = "No Money Left!"
+    return; 
+  }
+  
   if(!spinning && bet<=money){ //can't be spinning the machine already and need more money that you are trying to bet
-    money -= bet;
-    spinning = true;
-    spinStartTime = millis();
-    result = "";
+    if (allIn) {
+      activeBet = money;
+}   else {
+      activeBet = bet;
+}
+      money -= activeBet;
+      spinning = true;
+      spinStartTime = millis();
+      result = "";
   }
   
   
@@ -284,3 +311,11 @@ function drawSymbol(symbol, x, y){
     triangle(x-size/2, y+size/2, x, y-size/2, x+size/2, y+size/2);
   }
 }
+
+function keyReleased(){
+  if (keyCode === SHIFT && !spinning){
+    allIn = false;
+    // bet = betMin;  
+  }
+}  
+

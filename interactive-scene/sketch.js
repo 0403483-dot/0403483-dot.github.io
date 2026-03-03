@@ -92,11 +92,11 @@ function draw() {
 }
 }
 
-
+//draws the start screen with the game title
 function drawStartScreen(){
   background(0,0,100);
   fill(255);
-  textAlign(CENTER, CENTER); // puts title text in the center
+  textAlign(CENTER, CENTER);
   textSize(60); 
   textStyle(BOLD);
   text("SLOTS MACHINE", windowWidth/2, windowHeight/2);
@@ -120,7 +120,8 @@ function keyPressed(){
   }
 
 
-//updates and displays all money, bet, and result text
+
+  //updates and displays all money, bet, and result text
 //also shows legend for possible outcomes and instructions
 function drawText(){
   fill(0, 150, 0);
@@ -281,13 +282,15 @@ function mousePressed(){
 }
 
 
-function mouseDragged(){ //moves the lever with the mouse, constraining it to its track
+//moves the lever with the mouse, constraining it to its track
+function mouseDragged(){ 
   if (dragging){
     handleY = constrain(mouseY, originalHandleY, originalHandleY + 150);
     
     pullHere = " "; //removes the pull here text while pulling
   }
 }
+
 
 //releases the lever, triggers bet if pulled far enough, then resets the lever
 function mouseReleased(){
@@ -303,6 +306,7 @@ function mouseReleased(){
   
   }
 } 
+
 
 //function that sets the final shapes based on the given result from the random odds function
 function setFinalShapes(){

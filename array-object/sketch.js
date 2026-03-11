@@ -15,6 +15,9 @@ let betMin = 25;
 let currentRow = 0;
 let money = 1000;
 
+let gameRow; 
+
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -73,3 +76,11 @@ function mouseWheel(event){
 
   return false; // so that the screen doesn't scroll when the mouse wheel scrolls.
 }
+
+// function mouseClicked(){
+//   if (gameState = "playing" && mouseY >)
+// }
+
+let tower = {
+  
+};

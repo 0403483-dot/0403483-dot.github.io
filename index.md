@@ -6,8 +6,7 @@
 - [Images](03-images)
 - [Ball Array](04-ball-array)
 - [Generative Art](05-art)
-
-
+- [Perlin Noise](06-perlin)
 ## Assignments
 - [Interactive Scene](interactive-scene)
 - [Array and Object Notation](array-object)

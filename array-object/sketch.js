@@ -43,6 +43,15 @@ let winMultplierIncrements = 0.5;
 
 let selectedMode = "normal";
 
+
+let ding;
+let wrong;
+
+function preload(){
+  ding = loadSound("ding.wav");
+  wrong = loadSound("wrong.wav");
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
@@ -54,7 +63,7 @@ function draw() {
   betButton = {
     x: windowWidth * 0.45,
     y: startY + totalTowerH + windowHeight*0.1,
-    w: windowWidth* 0.1,
+    w: windowWidth * 0.1,
     h: windowHeight * 0.04,
   };
   hardModeButton = {
@@ -82,7 +91,7 @@ function draw() {
     w: windowWidth *0.1,
     h: windowHeight * 0.04
 
-  }
+  };
   if (gameState === "stopped"){
     drawButton(betButton, "Place Bet");
     drawButton(easyModeButton, "Easy Mode", "easy");
@@ -125,10 +134,9 @@ function drawTower(){
   startY =  windowHeight/2 - totalTowerH/2;
 
   if (gameState === "playing" && currentRow >=0){
-    noFill();
     stroke(255);
     strokeWeight(8);
-    rect(startX, startY + currentRow * (tileH + spacingY), totalTowerW, tileH,8)
+    rect(startX, startY + currentRow * (tileH + spacingY), totalTowerW, tileH,8);
     strokeWeight(1);
     stroke(0);
   }
@@ -150,8 +158,8 @@ function drawTower(){
         fill(80);
       }
       rect(x, y, tileW, tileH, 8);
-      }
     }
+  }
 }
   
 
@@ -167,7 +175,7 @@ function mouseWheel(event){
   return false; // so that the screen doesn't scroll when the mouse wheel scrolls.
 }
 function placeBet(){
-
+  winMultiplier = 1;
   if (bet <= money){
     money -= bet;
     generateTower();
@@ -198,31 +206,32 @@ function mousePressed(){
     if (inButton(easyModeButton)){
       columns = 6;
       bombsPerRow = 1;
-      winMultplierIncrements = 0.1;
+      winMultplierIncrements = 0.2;
       selectedMode = "easy";
-  }
+    }
     else if (inButton(hardModeButton)){
       columns = 4;
       bombsPerRow = 3;
       winMultplierIncrements = 1;
       selectedMode = "hard";
-  }
+    }
     else if (inButton(normalModeButton)){
       columns = 4;
       bombsPerRow = 1;
       winMultplierIncrements = 0.25;
       selectedMode = "normal";
-  }
+    }
     else if (inButton(betButton)){
       placeBet();
+    }
   }
-  }
-  else if (gameState === "playing")
+  else if (gameState === "playing") {
     if (inButton(cashOutButton)){
       gameState = "stopped";
       money += bet * winMultiplier;
       winMultiplier = 1;
       return;
+    }
   }
   if (gameState === "playing" && currentRow >= 0){
     for (let c = 0; c < columns; c++){
@@ -230,19 +239,21 @@ function mousePressed(){
       let y = startY + currentRow * (tileH + spacingY);
 
       if (mouseX > x && mouseX < x + tileW && mouseY > y && mouseY < y +tileH){
-       revealedTiles[currentRow][c] = true;
+        revealedTiles[currentRow][c] = true;
     
         if (tower[currentRow][c] === "bomb"){
-          gameState = "stopped"
-    }
+          gameState = "stopped";
+          wrong.play();
+        }
         else{
-        currentRow --;
-        winMultiplier += winMultplierIncrements;
+          currentRow --;
+          winMultiplier += winMultplierIncrements;
+          ding.play();
+        }
+        break;
+      }
     }
-    break;
   }
-  }
-}
 }
 
 function inButton(button){
@@ -250,7 +261,7 @@ function inButton(button){
 }
 
 function windowResized(){
-  resizeCanvas(windowWidth, windowHeight)
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function generateTower(){

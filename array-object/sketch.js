@@ -73,7 +73,7 @@ function setup() {
 
 function draw() {
   //defines button positions and sizes relative to the tower
-    betButton = {
+  betButton = {
     x: windowWidth * 0.45,
     y: startY + totalTowerH + windowHeight*0.1,
     w: windowWidth * 0.1,

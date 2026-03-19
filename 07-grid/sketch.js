@@ -38,9 +38,11 @@ function showGrid(){
   for (let y =0; y < SQUARE_DIMENTSIONS; y++){
     for (let x = 0; x < SQUARE_DIMENTSIONS; x++){
       if (theGrid[y][x] === 1){
+        stroke("white");
         fill("black");
       }
       if (theGrid[y][x] === 0){
+        stroke("black");
         fill("white");
       }
       square(x * cellSize, y * cellSize, cellSize);
@@ -51,5 +53,14 @@ function showGrid(){
 }
 
 function mouseClicked(){
+  let xCell = floor(mouseX/cellSize); 
+  let yCell = floor(mouseY/cellSize);
   
+  if (theGrid[yCell][xCell] === 1){  
+    theGrid[yCell][xCell] = 0;
+  }
+  else{
+    theGrid[yCell][xCell] = 1;
+  }
+
 }

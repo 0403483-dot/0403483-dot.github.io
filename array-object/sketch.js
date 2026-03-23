@@ -63,7 +63,7 @@ let cashOutSound;
 function preload(){
   dingSound = loadSound("ding.wav");
   wrongTileSound = loadSound("wrong.wav");
-  cashOutSound = loadSound("ka-ching.mp3")
+  cashOutSound = loadSound("ka-ching.mp3");
 }
 
 function setup() {

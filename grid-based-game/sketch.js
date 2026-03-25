@@ -14,9 +14,16 @@ let startY;
 
 let totalTowerSize;
 
+function preload(){
+  bombImage = loadImage("bomb.jpg");
+  questionMarkImage = loadImage("questionMark");
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   tileSize = windowWidth * 0.07 ;
+  bombImage.reize(tileSize, tileSize);
+  questionMarkImage.resize(tileSize, tileSize);
 
 }
 function windowResized(){
@@ -42,8 +49,8 @@ function drawGrid(){
       let x = startX + c * tileSize;
       let y = startY + r * tileSize;
       
-      fill("green");
       square(x, y, tileSize);
+      image(questionMarkImage, x ,y, tileSize);
     }
   }
 }

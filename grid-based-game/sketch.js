@@ -8,49 +8,58 @@
 let rows = 5;
 let cols = 5;
 
-let tileSize;
+let tileX;
+let tileY;
 let startX;
 let startY;
 
 let totalTowerSize;
+let spacingX;
+let spacingY;
 
 function preload(){
   bombImage = loadImage("bomb.jpg");
-  questionMarkImage = loadImage("questionMark");
+  questionMarkImage = loadImage("unknownTile.png");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  tileSize = windowWidth * 0.07 ;
-  bombImage.reize(tileSize, tileSize);
-  questionMarkImage.resize(tileSize, tileSize);
+  tileY = windowHeight* 0.12;
+  tileX = windowWidth * 0.07;
+  bombImage.resize(tileX, tileY);
+  questionMarkImage.resize(tileX, tileY);
 
 }
 function windowResized(){
   resizeCanvas(windowWidth, windowHeight);
-  tileSize = windowWidth * 0.07 ;
+  tileY = windowHeight* 0.12;
+  tileX = windowWidth * 0.07;
 
 }
 
 function draw() {
-  background(220);
+  background(0);
   drawGrid();
 }
 
 
 function drawGrid(){
-  totalTowerSize = cols * tileSize;
+  spacingX = windowWidth/55;
+  spacingY = windowHeight/55;
 
-  startX = windowWidth/2 - totalTowerSize /2;
-  startY = windowHeight/2 - totalTowerSize /2;
+  totalTowerW = cols*tileX + (cols -1)* spacingX;
+  totalTowerH = rows*tileY + (rows -1)* spacingY;
+
+  startX = windowWidth/2 - totalTowerW /2;
+  startY = windowHeight/2 - totalTowerH /2;
 
   for (let r = 0; r < rows; r++){
     for (let c = 0; c < cols; c++){
-      let x = startX + c * tileSize;
-      let y = startY + r * tileSize;
+      let x = startX + c * (tileX + spacingX);
+      let y = startY + r * (tileY + spacingY);
       
-      square(x, y, tileSize);
-      image(questionMarkImage, x ,y, tileSize);
+      // square(x, y, tileSize);
+      image(questionMarkImage, x ,y, tileX, tileY);
     }
   }
 }

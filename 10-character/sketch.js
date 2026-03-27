@@ -1,6 +1,6 @@
 // character in grid demo
 
-const CELL_SIZE = 100;
+const CELL_SIZE = 50;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
 const PLAYER = 9;

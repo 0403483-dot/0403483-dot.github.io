@@ -61,8 +61,7 @@ let cashOutSound;
 
 //loads sound files before starting program
 function preload(){
-  dingSound = loadSound("ding.wav");
-  wrongTileSound = loadSound("wrong.wav");
+  
   cashOutSound = loadSound("ka-ching.mp3");
 }
 

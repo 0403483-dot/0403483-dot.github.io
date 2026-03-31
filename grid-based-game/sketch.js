@@ -67,7 +67,6 @@ function draw() {
   numberOfBombs = slider.value();
   drawText();
   drawButton();
-  // generateGrid();
 }
 
 
@@ -75,11 +74,11 @@ function drawGrid(){
   spacingX = windowWidth/55;
   spacingY = windowHeight/55;
 
-  totalTowerW = cols*tileX + (cols -1)* spacingX;
-  totalTowerH = rows*tileY + (rows -1)* spacingY;
+  totalGridW = cols*tileX + (cols -1)* spacingX;
+  totalGridH = rows*tileY + (rows -1)* spacingY;
 
-  startX = windowWidth/2 - totalTowerW /2;
-  startY = windowHeight/2 - totalTowerH /2;
+  startX = windowWidth/2 - totalGridW /2;
+  startY = windowHeight/2 - totalGridH /2;
 
   for (let r = 0; r < rows; r++){
     for (let c = 0; c < cols; c++){
@@ -95,14 +94,29 @@ function drawGrid(){
 function drawButton(){
   betButton = {
     x: windowWidth * 0.45,
-    y: startY + totalTowerH,
+    y: startY + totalGridH,
     w: windowWidth * 0.1,
-    h: windowHeight * 0.04,
+    h: windowHeight * 0.05,
+  };
+  cashOutButton = {
+    x: windowWidth * 0.2  ,
+    y: startY + totalGridH,
+    w: windowWidth * 0.1,
+    h: windowHeight * 0.05,
   };
 
-  rect(betButton.x, betButton.y, betButton.w, betButton.h);
+  if (gameState === "stopped"){
+    fill("green");
+    rect(betButton.x, betButton.y, betButton.w, betButton.h);
+  }
+  else if (gameState === "playing"){
+    fill("red");
+    rect(cashOutButton.x, cashOutButton.y, cashOutButton.w, cashOutButton.h);
+
+  }
 
 }
+
 
 function inButton(button){
   return mouseX > button.x && mouseX < button.x + button.w && mouseY > button.y && mouseY < button.y + button.h;
@@ -112,30 +126,37 @@ function inButton(button){
 function mousePressed(){
   if (inButton(betButton) && gameState === "stopped"){
     generateGrid();
+    gameState = "playing";
   }
 
-  for (let c = 0; c < cols; c++){
-    let x = startX + c* (tileX +spacingX);
-    let y = startY + (tileY + spacingY);
-    
-    //checks if the mouse click occured inside a tile
-    if (mouseX > x && mouseX < x + tileX && mouseY > y && mouseY < y +tileY){
-      revealedTiles[r][c] = true;
-        
-      //if the tile is a bomb, the player immediately loses
-      if (tower[r][c] === "bomb"){
-        gameState = "stopped";
-        wrongTileSound.play();
-      }
-        
-      //if the tile is safe, the user moves up in the tower
-      else{
-        winMultiplier += winMultiplierIncrements;
-        dingSound.play();
+  if (inButton(cashOutButton) && gameState === "playing"){
+    gameState = "stopped";
+  }
+
+  if (gameState === "playing"){
+    for (let r = 0; r < rows; r++){
+      for (let c = 0; c < cols; c++){
+        let x = startX + c * (tileX + spacingX);
+        let y = startY + r * (tileY + spacingY);
+
+        // check if mouse is inside tile
+        if (mouseX > x && mouseX < x + tileX &&
+          mouseY > y && mouseY < y + tileY){
+
+          revealedTiles[r][c] = true;
+
+          if (grid[r][c] === "bomb"){
+            gameState = "stopped";
+          // wrongTileSound.play();
+          }
+          else{
+          // winMultiplier += winMultiplierIncrements;
+          // dingSound.play();
+          }
+        }
       }
     }
   }
-
 
 }
 
@@ -143,11 +164,6 @@ function drawText(){
   fill("white");
   textSize(windowWidth*0.015);
   text("Number Of Bombs: " + numberOfBombs, windowWidth*0.43, windowHeight*0.95);
-}
-
-
-function checkTile(){
-
 }
 
 function generateGrid(){
@@ -180,7 +196,6 @@ function generateGrid(){
     }
     else{
 
-      
     }
   }
 }

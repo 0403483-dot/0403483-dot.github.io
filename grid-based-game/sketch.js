@@ -23,6 +23,7 @@ let numberOfBombs;
 let sliderSize;
 
 let betButton;
+let cashOutButton;
 
 let revealedTiles;
 let grid = [];
@@ -64,9 +65,16 @@ function windowResized(){
 function draw() {
   background(0);
   drawGrid();
+  if(gameState === "stopped"){
+    slider.removeAttribute('disabled');
+  }
+  else if (gameState === "playing"){
+    slider.attribute('disabled', '');
+  }
   numberOfBombs = slider.value();
-  drawText();
   drawButton();
+  drawText();
+  
 }
 
 
@@ -85,11 +93,14 @@ function drawGrid(){
       let x = startX + c * (tileX + spacingX);
       let y = startY + r * (tileY + spacingY);
       
-      // square(x, y, tileSize);
+      
+      // if (revealedTiles[r][c] === false){
       image(questionMarkImage, x ,y, tileX, tileY);
     }
+      
   }
 }
+
 
 function drawButton(){
   betButton = {
@@ -99,8 +110,8 @@ function drawButton(){
     h: windowHeight * 0.05,
   };
   cashOutButton = {
-    x: windowWidth * 0.2  ,
-    y: startY + totalGridH,
+    x: windowWidth * 0.1 ,
+    y: windowHeight/2,
     w: windowWidth * 0.1,
     h: windowHeight * 0.05,
   };
@@ -164,6 +175,15 @@ function drawText(){
   fill("white");
   textSize(windowWidth*0.015);
   text("Number Of Bombs: " + numberOfBombs, windowWidth*0.43, windowHeight*0.95);
+
+
+  if (gameState === "stopped"){
+    text("Place Bet", betButton.x + windowWidth/64, betButton.y + windowHeight/30);
+  }
+  else if (gameState === "playing"){
+    text("Cash Out", cashOutButton.x + windowWidth/64, cashOutButton.y + windowHeight/30);
+  }
+
 }
 
 function generateGrid(){
@@ -199,3 +219,6 @@ function generateGrid(){
     }
   }
 }
+
+
+

@@ -28,11 +28,19 @@ let cashOutButton;
 let revealedTiles;
 let grid = [];
 
+let revealAllTiles = false;
+
+let dingSound;
+let wrongTileSound;
+
 function preload(){
-  // dingSound = loadSound("ding.wav");
-  // wrongTileSound = loadSound("wrong.wav");
+  dingSound = loadSound("correctTileSound.wav");
+  wrongTileSound = loadSound("wrongTileSound.wav");
+  
+  
   bombImage = loadImage("bomb.jpg");
   questionMarkImage = loadImage("unknownTile.png");
+  diamondImage = loadImage("diamondTileImage.avif");
 }
 
 function setup() {
@@ -41,6 +49,7 @@ function setup() {
   tileX = windowWidth * 0.07;
   bombImage.resize(tileX, tileY);
   questionMarkImage.resize(tileX, tileY);
+  diamondImage.resize(tileX,tileY);
   
   sliderSize = windowWidth *0.33;
   
@@ -87,19 +96,40 @@ function drawGrid(){
 
   startX = windowWidth/2 - totalGridW /2;
   startY = windowHeight/2 - totalGridH /2;
-
+   
   for (let r = 0; r < rows; r++){
     for (let c = 0; c < cols; c++){
       let x = startX + c * (tileX + spacingX);
       let y = startY + r * (tileY + spacingY);
       
+      if (gameState === "stopped"){
+        image(questionMarkImage, x ,y, tileX, tileY);
+
+      }
       
-      // if (revealedTiles[r][c] === false){
-      image(questionMarkImage, x ,y, tileX, tileY);
+      if (gameState === "playing"){
+        if (revealedTiles[r][c] === false) {
+          image(questionMarkImage, x, y, tileX, tileY);
+        }
+        else{
+          image(diamondImage, x, y, tileX, tileY);
+        }
+      }
+      if (revealAllTiles){
+        if (grid[r][c] === "bomb"){
+          image(bombImage, x ,y, tileX, tileY);
+        }
+        if (grid[r][c] === "safe"){
+          image(diamondImage, x ,y, tileX, tileY);
+        }
+ 
+
+      }
     }
-      
   }
+
 }
+
 
 
 function drawButton(){
@@ -138,6 +168,7 @@ function mousePressed(){
   if (inButton(betButton) && gameState === "stopped"){
     generateGrid();
     gameState = "playing";
+    revealAllTiles = false;
   }
 
   if (inButton(cashOutButton) && gameState === "playing"){
@@ -158,11 +189,12 @@ function mousePressed(){
 
           if (grid[r][c] === "bomb"){
             gameState = "stopped";
-          // wrongTileSound.play();
+            revealAllTiles = true;
+            wrongTileSound.play();
           }
           else{
           // winMultiplier += winMultiplierIncrements;
-          // dingSound.play();
+            dingSound.play();
           }
         }
       }
@@ -219,6 +251,4 @@ function generateGrid(){
     }
   }
 }
-
-
 

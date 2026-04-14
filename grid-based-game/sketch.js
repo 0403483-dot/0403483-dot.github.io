@@ -7,6 +7,11 @@
 
 let gameState = "stopped";
 
+let bet = 25;
+let money = 500;
+let winMultiplier = 1;
+let safeClicks = 0;
+
 let rows = 5;
 let cols = 5;
 
@@ -135,12 +140,12 @@ function drawGrid(){
 function drawButton(){
   betButton = {
     x: windowWidth * 0.45,
-    y: startY + totalGridH,
+    y: startY + totalGridH + tileY/5,
     w: windowWidth * 0.1,
     h: windowHeight * 0.05,
   };
   cashOutButton = {
-    x: windowWidth * 0.1 ,
+    x: windowWidth * 0.1,
     y: windowHeight/2,
     w: windowWidth * 0.1,
     h: windowHeight * 0.05,
@@ -166,6 +171,7 @@ function inButton(button){
 
 function mousePressed(){
   if (inButton(betButton) && gameState === "stopped"){
+    placeBet();
     generateGrid();
     gameState = "playing";
     revealAllTiles = false;
@@ -193,7 +199,13 @@ function mousePressed(){
             wrongTileSound.play();
           }
           else{
-          // winMultiplier += winMultiplierIncrements;
+            safeClicks++;
+
+            let totalTiles = rows * cols;
+            let safeTiles = totalTiles - numberOfBombs;
+
+            winMultiplier = totalTiles / (safeTiles - safeClicks);
+
             dingSound.play();
           }
         }
@@ -252,3 +264,10 @@ function generateGrid(){
   }
 }
 
+function placeBet(){
+  safeClicks = 0;
+  winMultiplier = 1;
+  if (bet <= money){ // ensures the player cannot bet more money than they currently have
+    money -= bet;
+  }
+}

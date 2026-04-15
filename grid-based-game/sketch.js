@@ -136,7 +136,6 @@ function drawGrid(){
 }
 
 
-
 function drawButton(){
   betButton = {
     x: windowWidth * 0.45,
@@ -179,6 +178,7 @@ function mousePressed(){
 
   if (inButton(cashOutButton) && gameState === "playing"){
     gameState = "stopped";
+    cashOut();
   }
 
   if (gameState === "playing"){
@@ -204,16 +204,21 @@ function mousePressed(){
             let totalTiles = rows * cols;
             let safeTiles = totalTiles - numberOfBombs;
 
-            winMultiplier = totalTiles / (safeTiles - safeClicks);
+            winMultiplier *= (totalTiles / safeTiles);
+            dingSound.play  ();
+          }
 
-            dingSound.play();
+
+          if(safeClicks === 25 - numberOfBombs){
+            revealAllTiles = true;
+            cashOut();
           }
         }
       }
     }
   }
-
 }
+
 
 function drawText(){
   fill("white");
@@ -227,6 +232,18 @@ function drawText(){
   else if (gameState === "playing"){
     text("Cash Out", cashOutButton.x + windowWidth/64, cashOutButton.y + windowHeight/30);
   }
+  fill(0, 150, 0);
+  textSize(windowWidth*0.015);
+  textStyle(BOLD);
+  text("Money $" + money.toFixed(2), windowWidth*0.8, windowHeight* 0.05); 
+
+  fill(200, 150, 0);
+  text("Bet: $" + bet, windowWidth*0.8, windowHeight*0.09); 
+
+  fill(255);
+  text("Bet Multiplier:"  + winMultiplier.toFixed(2) + "x", windowWidth*0.8, windowHeight* 0.15); 
+
+  textSize(windowWidth*0.01);
 
 }
 
@@ -258,9 +275,7 @@ function generateGrid(){
       grid[randomPlacementY][randomPlacementX] = "bomb";
       bombsPlaced ++;
     }
-    else{
 
-    }
   }
 }
 
@@ -271,3 +286,9 @@ function placeBet(){
     money -= bet;
   }
 }
+
+function cashOut(){
+  gameState = "stopped";
+  money += bet * winMultiplier;
+}
+

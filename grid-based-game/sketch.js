@@ -1,9 +1,12 @@
 // Grid Based game
-// Your Name
-// Date
+// Jonathan Hlady
+// April 15th 2026
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - Learned how to use p5js sliders - have a variable change based on the slider (# of bombs) - make the slider turn off
+// when the game is playing with slider attributes
+// used some new math functions though it wasn't that complicated 
+// used same sounds as last game so probably doesn't count
 
 
 // Tracks whether the player is in a round; controls input + UI state

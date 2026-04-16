@@ -248,7 +248,7 @@ function mousePressed(){
               //safe tiles increase reward potential 
               safeClicks++;
               updateMultiplier();
-              dingSound.play()
+              dingSound.play();
 
             }
             
@@ -256,8 +256,8 @@ function mousePressed(){
             if(safeClicks === totalTiles - numberOfBombs){
               revealAllTiles = true;
               cashOut();
+            }
           }
-        }
         }
       }
     }
@@ -266,7 +266,7 @@ function mousePressed(){
 
 //function that draws all text for buttons, money and slider UI
 function drawText(){
-  textAlign(LEFT)
+  textAlign(LEFT);
   fill("white");
   textSize(windowWidth*0.01);
   text("Number Of Bombs: " + numberOfBombs, windowWidth*0.45, windowHeight*0.93);
@@ -375,6 +375,6 @@ function keyPressed(){
   if (gameState === "stopped"){
     if (key === "r"){
       money = 500;
-  }
+    }
   }
 }

@@ -26,7 +26,9 @@ class Particle {
     circle(this.x, this.y, this.radius);
   }
 
-
+  isDead(){
+    return this.opacity <=0;
+  }
   
 }
 
@@ -38,11 +40,19 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background("black");
   for (let someFirework of theFireworks){
-    someFirework.update();
-    someFirework.display();
+    if (someFirework.isDead()){
+      //remove it
+      let index = theFireworks.indexOf(someFirework);
+      theFireworks.splice(index, 1);
+    }
+    else{
+      someFirework.update();
+      someFirework.display();
+    }
   }
+  mousePressed();
 }
 
 function mousePressed() {

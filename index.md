@@ -13,6 +13,7 @@
 - [Character in Grid](10-character)
 - [Walker OOP](11-walker)
 - [FireWorks OOP](13-fireworks)
+- [Connected Nodes](14-nodes)
 
 ## Assignments
 - [Interactive Scene](interactive-scene)

@@ -52,7 +52,7 @@ function draw() {
       someFirework.display();
     }
   }
-  mousePressed();
+  // mousePressed();
 }
 
 function mousePressed() {

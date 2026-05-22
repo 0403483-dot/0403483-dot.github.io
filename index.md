@@ -16,7 +16,8 @@
 - [Connected Nodes](14-nodes)
 - [OOP Inheritance](15-inheritance)
 - [Collide2d Demo](16-collide)
-- [Recirsive Circles](18-recursion)
+- [Recursive Circles](18-recursion)
+- [Recursive Triangles](19-sierpinski)
 
 ## Assignments
 - [Interactive Scene](interactive-scene)
